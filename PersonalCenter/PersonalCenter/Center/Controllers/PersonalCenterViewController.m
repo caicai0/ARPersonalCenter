@@ -74,6 +74,7 @@
 #pragma mark -- 设置界面
 - (void)setUI {
     self.title = @"个人中心";
+    NSLog(@"%ld",self.hash);
     self.view.backgroundColor = [UIColor whiteColor];
     //添加tableView
     [self.view addSubview:self.mainTableView];
@@ -125,20 +126,26 @@
 
 //接收通知
 - (void)acceptMsg:(NSNotification *)notification{
-    NSDictionary *userInfo = notification.userInfo;
-    NSString *canScroll = userInfo[@"canScroll"];
-    if ([canScroll isEqualToString:@"1"]) {
-        _canScroll = YES;
+    NSInteger notificationSys = [notification.object integerValue];
+    if (notificationSys == self.hash) {
+        NSDictionary *userInfo = notification.userInfo;
+        NSString *canScroll = userInfo[@"canScroll"];
+        if ([canScroll isEqualToString:@"1"]) {
+            _canScroll = YES;
+        }
     }
 }
 
 - (void)acceptMsgOfSubView:(NSNotification *)notification{
-    NSDictionary *userInfo = notification.userInfo;
-    NSString *canScroll = userInfo[@"canScroll"];
-    if ([canScroll isEqualToString:@"1"]) {
-        _mainTableView.scrollEnabled = YES;
-    }else if([canScroll isEqualToString:@"0"]) {
-        _mainTableView.scrollEnabled = NO;
+    NSInteger notificationSys = [notification.object integerValue];
+    if (notificationSys == self.hash) {
+        NSDictionary *userInfo = notification.userInfo;
+        NSString *canScroll = userInfo[@"canScroll"];
+        if ([canScroll isEqualToString:@"1"]) {
+            _mainTableView.scrollEnabled = YES;
+        }else if([canScroll isEqualToString:@"0"]) {
+            _mainTableView.scrollEnabled = NO;
+        }
     }
 }
 
@@ -182,7 +189,7 @@
         
         if (!_isTopIsCanNotMoveTabViewPre) {
             NSLog(@"分页选择部分滑动到顶端");
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"goTop" object:nil userInfo:@{@"canScroll":@"1"}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"goTop" object:@(self.hash) userInfo:@{@"canScroll":@"1"}];
             _canScroll = NO;
         }else {
             NSLog(@"页面滑动到底部后开始下拉");
@@ -362,9 +369,16 @@
         SecondViewController  * secondVC = [[SecondViewController alloc]init];
         ThirdViewController   * thirdVC  = [[ThirdViewController alloc]init];
         SecondViewController  * fourthVC = [[SecondViewController alloc]init];
+        
+        firstVC.notificationSystem = self.hash;
+        secondVC.notificationSystem = self.hash;
+        thirdVC.notificationSystem = self.hash;
+        fourthVC.notificationSystem = self.hash;
+        
         NSArray *controllers = @[firstVC,secondVC,thirdVC,fourthVC];
         NSArray *titleArray  = @[@"普吉岛",@"夏威夷",@"洛杉矶",@"新泽西"];
         CenterSegmentView *segmentView = [[CenterSegmentView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight -_naviBarHeight) controllers:controllers titleArray:(NSArray *)titleArray ParentController:self selectBtnIndex:(NSInteger)index lineWidth:kScreenWidth/5 lineHeight:3];
+        segmentView.notificationSystem = self.hash;
         _segmentView = segmentView;
     }
     return _segmentView;

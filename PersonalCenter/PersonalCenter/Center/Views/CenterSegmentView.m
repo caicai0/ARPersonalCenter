@@ -136,11 +136,11 @@
 
 //segmentScrollV左右滑动时和外层tableView上下滑动需要做互斥处理
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"isScroll" object:nil userInfo:@{@"canScroll":@"0"}];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"isScroll" object:@(self.notificationSystem) userInfo:@{@"canScroll":@"0"}];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"isScroll" object:nil userInfo:@{@"canScroll":@"1"}];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"isScroll" object:@(self.notificationSystem) userInfo:@{@"canScroll":@"1"}];
 }
 
 //滑动下方分页View时的事件处理

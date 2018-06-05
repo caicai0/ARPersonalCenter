@@ -12,4 +12,6 @@
 //此类为子控制器的父类
 @interface SegmentViewController : UIViewController
 @property (nonatomic, assign) NSInteger topHeight;
+@property ( nonatomic, assign) NSInteger     notificationSystem;//通知体系划分
+
 @end

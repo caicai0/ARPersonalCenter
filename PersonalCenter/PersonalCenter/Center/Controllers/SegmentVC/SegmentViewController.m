@@ -30,16 +30,22 @@
 - (void)acceptMsg:(NSNotification *)notification {
     NSString *notificationName = notification.name;
     if ([notificationName isEqualToString:@"goTop"]) {
-        NSDictionary *userInfo = notification.userInfo;
-        NSString *canScroll = userInfo[@"canScroll"];
-        if ([canScroll isEqualToString:@"1"]) {
-            _canScroll = YES;
-            self.scrollView.showsVerticalScrollIndicator = YES;
+        NSInteger sys = [notification.object integerValue];
+        if (self.notificationSystem == sys) {
+            NSDictionary *userInfo = notification.userInfo;
+            NSString *canScroll = userInfo[@"canScroll"];
+            if ([canScroll isEqualToString:@"1"]) {
+                _canScroll = YES;
+                self.scrollView.showsVerticalScrollIndicator = YES;
+            }
         }
     }else if([notificationName isEqualToString:@"leaveTop"]){
-        _canScroll = NO;
-        self.scrollView.contentOffset = CGPointZero;
-        self.scrollView.showsVerticalScrollIndicator = NO;
+        NSInteger sys = [notification.object integerValue];
+        if (self.notificationSystem == sys) {
+            _canScroll = NO;
+            self.scrollView.contentOffset = CGPointZero;
+            self.scrollView.showsVerticalScrollIndicator = NO;
+        }
     }
 }
 
@@ -49,7 +55,7 @@
     }
     CGFloat offsetY = scrollView.contentOffset.y;
     if (offsetY <= 0) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"leaveTop" object:nil userInfo:@{@"canScroll":@"1"}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"leaveTop" object:@(self.notificationSystem) userInfo:@{@"canScroll":@"1"}];
     }
     _scrollView = scrollView;
 }
